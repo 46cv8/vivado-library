@@ -55,7 +55,7 @@ use ieee.numeric_std.all;
 entity AXI_ZmodDAC1411_v1_0 is
 	generic (
 		-- Users to add parameters here
-        kBufferSize :integer := 14;
+        kBufferSize :integer := 16;
 		-- User parameters ends
 		-- Do not modify the parameters beyond this line
 
@@ -194,7 +194,7 @@ architecture arch_imp of AXI_ZmodDAC1411_v1_0 is
 	
 	component Circular_Buffer is
         generic (
-        kBufferSize: integer range 0 to 1024 := 14
+        kBufferSize: integer range 0 to 1024 := 16
         );
         Port ( 
         SysClk : in STD_LOGIC;
