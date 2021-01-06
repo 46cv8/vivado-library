@@ -68,7 +68,6 @@ entity AXI_ZmodDAC1411_v1_0 is
 	port (
 		-- Users to add ports here
 		SysClk : in std_logic; 
-		AxiStreamClk : in std_logic; 
 		lRst_n	: in std_logic;
 		sZmodControllerRst_n : out std_logic;
 		lIrqOut: out std_logic;
@@ -97,11 +96,17 @@ entity AXI_ZmodDAC1411_v1_0 is
         sSPI_RxWrEn : in std_logic; --Receive data FIFO write enable input 
         sSPI_RxDin : in std_logic_vector (7 downto 0); --Receive data input 
                         
-        s_axis_mm2s_tdata : in STD_LOGIC_VECTOR(31 DOWNTO 0);
-        s_axis_mm2s_tkeep : in STD_LOGIC_VECTOR(3 DOWNTO 0);
-        s_axis_mm2s_tvalid : in STD_LOGIC;
-        s_axis_mm2s_tready : out STD_LOGIC;
-        s_axis_mm2s_tlast : in STD_LOGIC;
+        s_axis_ch1_tdata : in STD_LOGIC_VECTOR(15 DOWNTO 0);
+        s_axis_ch1_tkeep : in STD_LOGIC_VECTOR(1 DOWNTO 0);
+        s_axis_ch1_tvalid : in STD_LOGIC;
+        s_axis_ch1_tready : out STD_LOGIC;
+        s_axis_ch1_tlast : in STD_LOGIC;
+
+        s_axis_ch2_tdata : in STD_LOGIC_VECTOR(15 DOWNTO 0);
+        s_axis_ch2_tkeep : in STD_LOGIC_VECTOR(1 DOWNTO 0);
+        s_axis_ch2_tvalid : in STD_LOGIC;
+        s_axis_ch2_tready : out STD_LOGIC;
+        s_axis_ch2_tlast : in STD_LOGIC;
 
 		-- Ports of Axi Slave Bus Interface S00_AXI
 		s00_axi_aclk	: in std_logic;
@@ -191,35 +196,6 @@ architecture arch_imp of AXI_ZmodDAC1411_v1_0 is
         lSPI_CmdTxRxError : in STD_LOGIC_VECTOR(3 downto 0)
         );
 	end component AXI_ZmodDAC1411_v1_0_S00_AXI;
-	
-	component Circular_Buffer is
-        generic (
-        kBufferSize: integer range 0 to 1024 := 17
-        );
-        Port ( 
-        SysClk : in STD_LOGIC;
-        AxiStreamClk : in STD_LOGIC;
-        AxiLiteClk : in std_logic;
-        sRst_n : in STD_LOGIC;
-        xsRst_n : in STD_LOGIC;
-        sInitDone_n: in STD_LOGIC;
-        sCh1Out : out STD_LOGIC_VECTOR (13 downto 0);
-        sCh2Out : out STD_LOGIC_VECTOR (13 downto 0);
-           
-        s_axis_mm2s_tdata : in STD_LOGIC_VECTOR(31 DOWNTO 0);
-        s_axis_mm2s_tkeep : in STD_LOGIC_VECTOR(3 DOWNTO 0);
-        s_axis_mm2s_tvalid : in STD_LOGIC;
-        s_axis_mm2s_tready : out STD_LOGIC;
-        s_axis_mm2s_tlast : in STD_LOGIC;
-           
-        sDacEn: in STD_LOGIC;
-        sTransferLength : in STD_LOGIC_VECTOR (kBufferSize-1 downto 0);
-        xsTransferLength : in std_logic_vector (kBufferSize-1 downto 0); 
-        sOutAddrCntRst : in std_logic;
-        sDivRate : in std_logic_vector(13 downto 0);
-        lBufferFull : out STD_LOGIC
-        );
-    end component Circular_Buffer;
     
     component SPI_Adapter is
     Port ( SysClk : in STD_LOGIC;
@@ -274,9 +250,9 @@ end component ResetBridge;
 
 signal lSync	:  std_logic_vector(3 downto 0);
 
-signal lRegRst, lRegRstR, lRegRstPulse, lRegRst_n, sRst_n, xsRst_n, lExtRegRst_n : std_logic;
+signal lRegRst, lRegRstR, lRegRstPulse, lRegRst_n, sRst_n, lExtRegRst_n : std_logic;
 signal sDacEn   :  std_logic;
-signal sTransferLength, xsTransferLength, lDinTL, xsDoutTL :  std_logic_vector (kBufferSize-1 downto 0);
+signal sTransferLength, lDinTL :  std_logic_vector (kBufferSize-1 downto 0);
 signal lBufferFull, lSetStop : std_logic;
 signal lAdcSPI_Idle : std_logic;
 signal sOutAddrCntRst, sOutAddrCntRstR, sOutAddrCntRstPulse : std_logic;
@@ -317,7 +293,6 @@ signal lReg16Rd, sReg16Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
 --Clock domain Crossing Signals
 signal aHanshakeReset : std_logic;
 signal Index	: integer;
-signal xsValidTL, lIpushTL, lIrdyTL, lSetIpushTL, lRstIpushTL : std_logic;
 type RegisterFile_t is array (kCrossRegCnt downto 0) of std_logic_vector(31 downto 0);
 signal lRegisters, lRegistersDin, sRegHanshakeOut, sRegisters, lRegistersR : RegisterFile_t;
 signal lIpushReg, lSetIpushReg, lIrdyReg, sValidReg, lRstIpushReg: std_logic_vector (kCrossRegCnt downto 0);
@@ -356,15 +331,7 @@ InstLaxiResetHandshake : ResetBridge
       OutClk => SysClk,
       oRst => sRst_n);
       
-sZmodControllerRst_n <= sRst_n;      
-
-InstSaxiResetHandshake : ResetBridge
-   Generic map(
-      kPolarity => '0')
-   Port map(
-      aRst => lExtRegRst_n, -- asynchronous reset; active-high, if kPolarity=1
-      OutClk => AxiStreamClk,
-      oRst => xsRst_n);
+sZmodControllerRst_n <= sRst_n;
       
 aHanshakeReset <= lRegRst and (not lRst_n);
 
@@ -429,31 +396,6 @@ AXI_ZmodDAC1411_v1_0_S00_AXI_inst : AXI_ZmodDAC1411_v1_0_S00_AXI
         lSPI_RxFifoRdEn => lSPI_RxFifoRdEn,
         lSPI_CmdRx => lSPI_CmdRx,
         lSPI_CmdTxRxError => lSPI_CmdTxRxError
-	);
-
-Circular_Buffer_inst : Circular_Buffer
-	port map (
-        SysClk => SysClk,
-        AxiStreamClk => AxiStreamClk,
-        AxiLiteClk => s00_axi_aclk,
-        sRst_n => sRst_n,
-        xsRst_n => xsRst_n,
-        sInitDone_n => sInitDone_n,
-        sCh1Out => sCh1Out,
-        sCh2Out => sCh2Out,
-        
-        s_axis_mm2s_tdata => s_axis_mm2s_tdata,
-        s_axis_mm2s_tkeep => s_axis_mm2s_tkeep,
-        s_axis_mm2s_tvalid => s_axis_mm2s_tvalid,
-        s_axis_mm2s_tready => s_axis_mm2s_tready,
-        s_axis_mm2s_tlast => s_axis_mm2s_tlast,
-           
-        sDacEn => sDacEn,
-        sTransferLength => sTransferLength,
-        xsTransferLength => xsTransferLength,
-        sOutAddrCntRst => sOutAddrCntRst,
-        sDivRate => sDivRate,
-        lBufferFull => lBufferFull
 	);
 	
 	SPI_Adapter_inst :SPI_Adapter
@@ -586,76 +528,6 @@ begin
     end if;
 end process;
 
----------------------TRANSFER LENGTH CLOCK DOMAIN CROSSING---------------------------------------------------------------
-
-ProcTLIpushSet: process (s00_axi_aclk) 
---Since iPush transition only trigers input data to propagate
---towrds the output if iRdy is set, it is necessary to have two distinct signals: one to monitor regster modifications
---and one to push data through the hanshake block whenever the input data was modified and the hanshake module is ready
-begin
-    if (s00_axi_aclk' event and s00_axi_aclk = '1') then
-        if (lExtRegRst_n = '0') then
-            lSetIpushTL <=  '0'; 
-            lDinTL <= (others => '0');
-        else
-            if (lRegistersR(2) /= lRegisters(2)) then
-                lSetIpushTL <= '1';
-                lDinTL <= lReg6Rd(kBufferSize+1 downto 2);
-            elsif (lRstIpushTL = '1') then
-                lSetIpushTL <= '0';
-            end if;
-        end if;
-    end if;
-end process;
-              
-ProcTLIpush: process (s00_axi_aclk) 
-begin
-    if (s00_axi_aclk' event and s00_axi_aclk = '1') then
-        if (lExtRegRst_n = '0') then
-            lIpushTL  <=  '0';
-            lRstIpushTL <= '0';
-        else
-                if ((lSetIpushTL = '1') and (lIrdyTL = '1') and (lIpushTL = '0'))then
-                    lIpushTL <= '1';
-                    lRstIpushTL <= '1';
-                else
-                    lIpushTL <= '0';
-                    lRstIpushTL <= '0';
-                end if;     
-        end if;
-    end if;
-end process;
-
-InstStreamTLHandshake : HandshakeData -- synchronization module for AXI LITE LENGTH register crossing to PROG_CLK clock domain 
-generic map (
-    kDataWidth	=> kBufferSize
-    )
-    Port map (
-        InClk => s00_axi_aclk,
-        OutClk => AxiStreamClk,
-        iData => lReg6Rd(kBufferSize+1 downto 2),
-        oData => xsDoutTL,   -- synchronized output
-        iPush => lIpushTL,
-        iRdy => lIrdyTL,  
-        oAck => '1',  
-        oValid => xsValidTL,   -- indicates valid synchronized data
-        aReset => aHanshakeReset
-        );
-
-ProcTLOData: process (AxiStreamClk) 
-begin
-    if (AxiStreamClk' event and AxiStreamClk = '1') then
-        if (xsRst_n = '0') then
-            xsTransferLength <= (others => '0');
-        else
-            for Index in 0 to kCrossRegCnt loop
-                if (xsValidTL = '1') then
-                    xsTransferLength <= xsDoutTL;
-                end if;
-            end loop;    
-        end if;
-    end if;
-end process;
 
 ---------------------SPI IDLE CLOCK DOMAIN CROSSING-----------------------------------------------------------------------
 ProcIdleRegister: process (SysClk) 
@@ -727,17 +599,42 @@ generic map (
 
 ProcIdleOData: process (s00_axi_aclk) 
 begin
-    if (AxiStreamClk' event and AxiStreamClk = '1') then
+    if (s00_axi_aclk' event and s00_axi_aclk = '1') then
         if (lExtRegRst_n = '0') then
             lAdcSPI_Idle <= '0';
         else
-            if (xsValidTL = '1') then
-                lAdcSPI_Idle <= lAdcSPI_IdleDout(0);
-            end if;  
+            lAdcSPI_Idle <= lAdcSPI_IdleDout(0);
         end if;
     end if;
 end process;
 ------------------------------------------------------------------------------------------------------------------
+
+
+
+ProcOutAddrCounter: process (SysClk)  
+begin
+    if (SysClk' event and SysClk = '1') then
+        if (sRst_n = '0' or sOutAddrCntRst = '1' or sDacEn = '0') then
+            sCh1Out <= (others => '0');
+            sCh2Out <= (others => '0');
+            s_axis_ch1_tready <= '0';
+            s_axis_ch2_tready <= '0';
+        else
+            s_axis_ch1_tready <= '1';
+            if (s_axis_ch1_tvalid = '1') then
+                sCh1Out <= s_axis_ch1_tdata(15 downto 2);
+            else
+                sCh1Out <= (others => '0');
+            end if;
+            if (s_axis_ch2_tvalid = '1') then
+                sCh2Out <= s_axis_ch2_tdata(15 downto 2);
+            else
+                sCh2Out <= (others => '0');
+            end if;
+        end if;
+    end if;
+end process;
+
 
 sReg0Rd  <= sRegisters(0);
 sReg1Rd  <= sRegisters(1);
