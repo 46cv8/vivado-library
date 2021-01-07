@@ -626,6 +626,7 @@ begin
             else
                 sCh1Out <= (others => '0');
             end if;
+            s_axis_ch2_tready <= '1';
             if (s_axis_ch2_tvalid = '1') then
                 sCh2Out <= s_axis_ch2_tdata(15 downto 2);
             else

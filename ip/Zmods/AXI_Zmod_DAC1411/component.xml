@@ -544,7 +544,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>14ddad5b</spirit:value>
+            <spirit:value>c44640c5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -566,7 +566,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>14ddad5b</spirit:value>
+            <spirit:value>c44640c5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1573,7 +1573,7 @@
       <spirit:file>
         <spirit:name>src/AXI_ZmodDAC1411_v1_0.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_6c533689</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_c48b11bf</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -1718,8 +1718,8 @@
         <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
-      <xilinx:coreRevision>25</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-12-29T08:01:32Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>26</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2021-01-07T00:12:27Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@6bcfc864_ARCHIVE_LOCATION">c:/vivado_projects/ciprian_git_zmoddemo/repo/local/ip/axi_zmod_dac1411</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2a45d51d_ARCHIVE_LOCATION">c:/vivado_projects/ciprian_git_zmoddemo/repo/local/ip/axi_zmod_dac1411</xilinx:tag>
@@ -2107,13 +2107,24 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@5ac79da7_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@3c0a74ae_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1ff4150a_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53190ceb_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7ed0b9d5_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f9c721c_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7918ed48_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ce84e28_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a231549_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f35b29d_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56c8c424_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e42df47_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52090bd7_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7ea8aa03_ARCHIVE_LOCATION">/home/user/shares/digilent/Eclypse-Z7_zmod_dac_test/hw/repo/vivado-library/ip/Zmods/AXI_Zmod_DAC1411</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="f26ed122"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="de6eae12"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="d66378af"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="15db205b"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="2a63af06"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="22ebac5c"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="b11fbf9a"/>
