@@ -51,6 +51,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
 
 entity AXI_ZmodDAC1411_v1_0 is
 	generic (
@@ -257,6 +259,7 @@ signal lBufferFull, lSetStop : std_logic;
 signal lAdcSPI_Idle : std_logic;
 signal sOutAddrCntRst, sOutAddrCntRstR, sOutAddrCntRstPulse : std_logic;
 signal sDivRate : std_logic_vector(13 downto 0);
+signal sDivRateCnt : std_logic_vector (13 downto 0);
 
 signal lSPI_CmdTxCount : STD_LOGIC_VECTOR(6 downto 0);
 signal lSPI_CmdRxCount : STD_LOGIC_VECTOR(6 downto 0);
@@ -619,18 +622,26 @@ begin
             sCh2Out <= (others => '0');
             s_axis_ch1_tready <= '0';
             s_axis_ch2_tready <= '0';
+            sDivRateCnt <= (others => '0');
         else
-            s_axis_ch1_tready <= '1';
-            if (s_axis_ch1_tvalid = '1') then
-                sCh1Out <= s_axis_ch1_tdata(15 downto 2);
+            if(sDivRateCnt = sDivRate) then
+                sDivRateCnt <= (others => '0');
+                s_axis_ch1_tready <= '1';
+                if (s_axis_ch1_tvalid = '1') then
+                    sCh1Out <= s_axis_ch1_tdata(15 downto 2);
+                else
+                    sCh1Out <= (others => '0');
+                end if;
+                s_axis_ch2_tready <= '1';
+                if (s_axis_ch2_tvalid = '1') then
+                    sCh2Out <= s_axis_ch2_tdata(15 downto 2);
+                else
+                    sCh2Out <= (others => '0');
+                end if;
             else
-                sCh1Out <= (others => '0');
-            end if;
-            s_axis_ch2_tready <= '1';
-            if (s_axis_ch2_tvalid = '1') then
-                sCh2Out <= s_axis_ch2_tdata(15 downto 2);
-            else
-                sCh2Out <= (others => '0');
+                sDivRateCnt <= sDivRateCnt + '1';
+                s_axis_ch1_tready <= '0';
+                s_axis_ch2_tready <= '0';
             end if;
         end if;
     end if;
