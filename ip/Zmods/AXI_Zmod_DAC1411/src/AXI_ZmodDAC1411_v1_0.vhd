@@ -258,8 +258,8 @@ signal sTransferLength, lDinTL :  std_logic_vector (kBufferSize-1 downto 0);
 signal lBufferFull, lSetStop : std_logic;
 signal lAdcSPI_Idle : std_logic;
 signal sOutAddrCntRst, sOutAddrCntRstR, sOutAddrCntRstPulse : std_logic;
-signal sDivRate : std_logic_vector(13 downto 0);
-signal sDivRateCnt : std_logic_vector (13 downto 0);
+signal sDivRate : std_logic_vector(19 downto 0);
+signal sDivRateCnt : std_logic_vector (19 downto 0);
 
 signal lSPI_CmdTxCount : STD_LOGIC_VECTOR(6 downto 0);
 signal lSPI_CmdRxCount : STD_LOGIC_VECTOR(6 downto 0);
@@ -667,7 +667,7 @@ sSPI_CmdRunStop <= sReg0Rd(1);
 sSPI_CmdReadEn  <= sReg0Rd(2);
 lIntrEn         <= lReg0Rd(3);  --NO CROSSING
 sOutAddrCntRst  <= sReg0Rd(6);
-sDivRate        <= sReg0Rd(29 downto 16);
+sDivRate        <= sReg0Rd(29 downto 10);
 lRegRst         <= lReg0Rd(31); --NO CROSSING
 sDacEn          <= sReg0Rd(4);
 sDacEnOut       <= sReg0Rd(4);
