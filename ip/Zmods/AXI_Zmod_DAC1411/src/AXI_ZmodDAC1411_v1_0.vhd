@@ -625,7 +625,7 @@ begin
             sDivRateCnt <= (others => '0');
         else
             if(sDivRateCnt = sDivRate) then
-                sDivRateCnt <= (others => '0');
+                sDivRateCnt <= "00000000000000000001";
                 s_axis_ch1_tready <= '1';
                 if (s_axis_ch1_tvalid = '1') then
                     sCh1Out <= s_axis_ch1_tdata(15 downto 2);
