@@ -138,7 +138,9 @@ entity AXI_ZmodDAC1411_v1_0_S00_AXI is
         lReg13Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
         lReg14Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
         lReg15Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
-        lReg16Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);  
+        lReg16Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
+        lReg17Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
+        lReg18Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
         --IP write register interface (IP to AXI register file access)
         lAdcSPI_Idle      : in std_logic;
         sInitDone_n       : in std_logic;
@@ -197,6 +199,8 @@ architecture arch_imp of AXI_ZmodDAC1411_v1_0_S00_AXI is
 	signal lSlvReg14: std_logic_vector(kAxiLiteDataWidth-1 downto 0);
 	signal lSlvReg15: std_logic_vector(kAxiLiteDataWidth-1 downto 0);
 	signal lSlvReg16: std_logic_vector(kAxiLiteDataWidth-1 downto 0);
+	signal lSlvReg17: std_logic_vector(kAxiLiteDataWidth-1 downto 0);
+	signal lSlvReg18: std_logic_vector(kAxiLiteDataWidth-1 downto 0);
 	signal lSlvRegRdEn	: std_logic;
 	signal lSlvRegWrEn	: std_logic;
 	signal lRegDataOut	:std_logic_vector(kAxiLiteDataWidth-1 downto 0);
@@ -224,6 +228,8 @@ begin
     lReg14Rd <= lSlvReg14;
     lReg15Rd <= lSlvReg15;
     lReg16Rd <= lSlvReg16;
+    lReg17Rd <= lSlvReg17;
+    lReg18Rd <= lSlvReg18;
 
 	lAxiAwready	<= lAxiAwreadyLoc;
 	lAxiWready	<= lAxiWreadyLoc;
@@ -705,6 +711,48 @@ ProcSlvReg16: process (AxiLiteClk)  --sExtCh2HgMultCoef
 	    end if;
 	  end if;                   
 	end process; 
+	
+ProcSlvReg17: process (AxiLiteClk)  --Ch1 Control Register
+	variable loc_addr :std_logic_vector(kOptMemAddrBits downto 0); 
+	begin
+	  if rising_edge(AxiLiteClk) then 
+	    if ((lAxiAreset_n = '0') or (lRegRstPulse = '1')) then
+	      lSlvReg17 <= (others => '0');
+	    else
+	      loc_addr := lAxiAwaddrLoc(kAddrLsb + kOptMemAddrBits downto kAddrLsb);
+	      if ((lSlvRegWrEn = '1') and (loc_addr = "10001")) then
+	            for lByteIndex in 0 to (kAxiLiteDataWidth/8-1) loop
+	              if ( lAxiWstrb(lByteIndex) = '1' ) then
+	                -- Respective byte enables are asserted as per write strobes                   
+	                -- slave registor 6
+	                lSlvReg17(lByteIndex*8+7 downto lByteIndex*8) <= lAxiWdata(lByteIndex*8+7 downto lByteIndex*8);
+	              end if;
+	            end loop;
+	      end if;
+	    end if;
+	  end if;                   
+	end process; 
+	
+ProcSlvReg18: process (AxiLiteClk)  --Ch1 Control Register
+	variable loc_addr :std_logic_vector(kOptMemAddrBits downto 0); 
+	begin
+	  if rising_edge(AxiLiteClk) then 
+	    if ((lAxiAreset_n = '0') or (lRegRstPulse = '1')) then
+	      lSlvReg18 <= (others => '0');
+	    else
+	      loc_addr := lAxiAwaddrLoc(kAddrLsb + kOptMemAddrBits downto kAddrLsb);
+	      if ((lSlvRegWrEn = '1') and (loc_addr = "10010")) then
+	            for lByteIndex in 0 to (kAxiLiteDataWidth/8-1) loop
+	              if ( lAxiWstrb(lByteIndex) = '1' ) then
+	                -- Respective byte enables are asserted as per write strobes                   
+	                -- slave registor 6
+	                lSlvReg18(lByteIndex*8+7 downto lByteIndex*8) <= lAxiWdata(lByteIndex*8+7 downto lByteIndex*8);
+	              end if;
+	            end loop;
+	      end if;
+	    end if;
+	  end if;                   
+	end process; 
 									 		    
 	process (AxiLiteClk)
 	begin
@@ -823,7 +871,11 @@ ProcSlvReg16: process (AxiLiteClk)  --sExtCh2HgMultCoef
 	      when b"01111" =>
 	        lRegDataOut <= lSlvReg15;  
 	      when b"10000" =>
-	        lRegDataOut <= lSlvReg16;    
+	        lRegDataOut <= lSlvReg16;   
+	      when b"10001" =>
+	        lRegDataOut <= lSlvReg17;   
+	      when b"10010" =>
+	        lRegDataOut <= lSlvReg18;    
 	      when others =>
 	        lRegDataOut  <= (others => '0');
 	        lSlvReg4RdEn <= '0';

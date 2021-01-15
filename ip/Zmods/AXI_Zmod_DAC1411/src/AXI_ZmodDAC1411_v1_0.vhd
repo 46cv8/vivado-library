@@ -65,7 +65,7 @@ entity AXI_ZmodDAC1411_v1_0 is
 		-- Parameters of Axi Slave Bus Interface S00_AXI
 		C_S00_AXI_DATA_WIDTH	: integer	:= 32;
 		C_S00_AXI_ADDR_WIDTH	: integer	:= 7;
-		kCrossRegCnt: integer range 0 to 31 := 12
+		kCrossRegCnt: integer range 0 to 31 := 14
 	);
 	port (
 		-- Users to add ports here
@@ -182,7 +182,9 @@ architecture arch_imp of AXI_ZmodDAC1411_v1_0 is
         lReg13Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
         lReg14Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
         lReg15Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
-        lReg16Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);  
+        lReg16Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
+        lReg17Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
+        lReg18Rd	: out std_logic_vector(kAxiLiteDataWidth-1 downto 0);
         
         lAdcSPI_Idle : IN STD_LOGIC;
         sInitDone_n : in std_logic;
@@ -250,6 +252,61 @@ component ResetBridge is
       oRst : out STD_LOGIC);
 end component ResetBridge;
 
+
+function diff_div_by_divrate (
+    sDifferenceF : in std_logic_vector(13 downto 0);
+    sDivRateF : in std_logic_vector(19 downto 0)
+    )
+    return std_logic_vector is
+    variable v_TEMP : std_logic_vector(13 downto 0);
+begin
+    if (sDivRateF = "0000000000000000001") then
+      v_TEMP(13 downto 0) :=  sDifferenceF(13 downto 0);
+    elsif (sDivRateF = "00000000000000000010") then
+      v_TEMP(12 downto 0) :=  sDifferenceF(13 downto 1);
+      v_TEMP(13 downto 13) := sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000000000100") then
+      v_TEMP(11 downto 0) :=  sDifferenceF(13 downto 2);
+      v_TEMP(13 downto 12) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000000001000") then
+      v_TEMP(10 downto 0) :=  sDifferenceF(13 downto 3);
+      v_TEMP(13 downto 11) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000000010000") then
+      v_TEMP(9 downto 0) :=  sDifferenceF(13 downto 4);
+      v_TEMP(13 downto 10) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000000100000") then
+      v_TEMP(8 downto 0) :=  sDifferenceF(13 downto 5);
+      v_TEMP(13 downto 9) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000001000000") then
+      v_TEMP(7 downto 0) :=  sDifferenceF(13 downto 6);
+      v_TEMP(13 downto 8) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000010000000") then
+      v_TEMP(6 downto 0) :=  sDifferenceF(13 downto 7);
+      v_TEMP(13 downto 7) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000000100000000") then
+      v_TEMP(5 downto 0) :=  sDifferenceF(13 downto 8);
+      v_TEMP(13 downto 6) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000001000000000") then
+      v_TEMP(4 downto 0) :=  sDifferenceF(13 downto 9);
+      v_TEMP(13 downto 5) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000010000000000") then
+      v_TEMP(3 downto 0) :=  sDifferenceF(13 downto 10);
+      v_TEMP(13 downto 4) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000000100000000000") then
+      v_TEMP(2 downto 0) :=  sDifferenceF(13 downto 11);
+      v_TEMP(13 downto 3) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000001000000000000") then
+      v_TEMP(1 downto 0) :=  sDifferenceF(13 downto 12);
+      v_TEMP(13 downto 2) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    elsif (sDivRateF = "00000010000000000000") then
+      v_TEMP(0 downto 0) :=  sDifferenceF(13 downto 13);
+      v_TEMP(13 downto 1) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
+    else
+      v_TEMP := sDifferenceF;  
+    end if;
+    return std_logic_vector(v_TEMP);
+end;
+
 signal lSync	:  std_logic_vector(3 downto 0);
 
 signal lRegRst, lRegRstR, lRegRstPulse, lRegRst_n, sRst_n, lExtRegRst_n : std_logic;
@@ -258,8 +315,9 @@ signal sTransferLength, lDinTL :  std_logic_vector (kBufferSize-1 downto 0);
 signal lBufferFull, lSetStop : std_logic;
 signal lAdcSPI_Idle : std_logic;
 signal sOutAddrCntRst, sOutAddrCntRstR, sOutAddrCntRstPulse : std_logic;
-signal sDivRate : std_logic_vector(19 downto 0);
-signal sDivRateCnt : std_logic_vector (19 downto 0);
+signal sDivRate, sCh1DivRate, sCh1DivRateCnt, sCh2DivRate, sCh2DivRateCnt : std_logic_vector(19 downto 0);
+signal lCh1DivInterpolate, lCh2DivInterpolate : STD_LOGIC;
+signal sCh1OutLast, sCh2OutLast, sCh1OutNext, sCh2OutNext, sCh1OutDiff, sCh2OutDiff, sCh1IntIncr, sCh2IntIncr : std_logic_vector(13 downto 0);
 
 signal lSPI_CmdTxCount : STD_LOGIC_VECTOR(6 downto 0);
 signal lSPI_CmdRxCount : STD_LOGIC_VECTOR(6 downto 0);
@@ -292,6 +350,8 @@ signal lReg13Rd, sReg13Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
 signal lReg14Rd, sReg14Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
 signal lReg15Rd, sReg15Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
 signal lReg16Rd, sReg16Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
+signal lReg17Rd, sReg17Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
+signal lReg18Rd, sReg18Rd	:std_logic_vector(C_S00_AXI_DATA_WIDTH-1 downto 0);
 
 --Clock domain Crossing Signals
 signal aHanshakeReset : std_logic;
@@ -337,7 +397,7 @@ InstLaxiResetHandshake : ResetBridge
 sZmodControllerRst_n <= sRst_n;
       
 aHanshakeReset <= lRegRst and (not lRst_n);
-
+  
 -------------------------------------------------------------------------------------------------------------------------
 -- Instantiation of Axi Bus Interface S00_AXI
 AXI_ZmodDAC1411_v1_0_S00_AXI_inst : AXI_ZmodDAC1411_v1_0_S00_AXI
@@ -386,6 +446,8 @@ AXI_ZmodDAC1411_v1_0_S00_AXI_inst : AXI_ZmodDAC1411_v1_0_S00_AXI
         lReg14Rd => lReg14Rd,
         lReg15Rd => lReg15Rd,
         lReg16Rd => lReg16Rd,
+        lReg17Rd => lReg17Rd,
+        lReg18Rd => lReg18Rd,
     
         lAdcSPI_Idle => lAdcSPI_Idle,
         sInitDone_n => sInitDone_n,
@@ -442,6 +504,8 @@ lRegisters(9) <= lReg13Rd;
 lRegisters(10) <= lReg14Rd;
 lRegisters(11) <= lReg15Rd;
 lRegisters(12) <= lReg16Rd;
+lRegisters(13) <= lReg17Rd;
+lRegisters(14) <= lReg18Rd;
 
 ---------------------REGISTERS CLOCK DOMAIN CROSSING---------------------------------------------------------------------
 
@@ -613,35 +677,94 @@ end process;
 ------------------------------------------------------------------------------------------------------------------
 
 
-
 ProcOutAddrCounter: process (SysClk)  
 begin
     if (SysClk' event and SysClk = '1') then
         if (sRst_n = '0' or sOutAddrCntRst = '1' or sDacEn = '0') then
             sCh1Out <= (others => '0');
             sCh2Out <= (others => '0');
+            sCh1OutLast <= (others => '0');
+            sCh2OutLast <= (others => '0');
+            sCh1OutNext <= (others => '0');
+            sCh2OutNext <= (others => '0');
+            sCh1IntIncr <= (others => '0');
+            sCh1IntIncr <= (others => '0');
             s_axis_ch1_tready <= '0';
             s_axis_ch2_tready <= '0';
-            sDivRateCnt <= (others => '0');
-        else
-            if(sDivRateCnt = sDivRate) then
-                sDivRateCnt <= "00000000000000000001";
-                s_axis_ch1_tready <= '1';
-                if (s_axis_ch1_tvalid = '1') then
-                    sCh1Out <= s_axis_ch1_tdata(15 downto 2);
+            sCh1DivRateCnt <= (others => '0');
+            sCh2DivRateCnt <= (others => '0');
+        else            
+            if(lCh1DivInterpolate = '1') then
+                if(sCh1DivRateCnt = sCh1DivRate) then
+                    sCh1DivRateCnt <= "00000000000000000001";
+                    s_axis_ch1_tready <= '1';
+                    sCh1OutLast <= sCh1OutNext;
+                    if (s_axis_ch1_tvalid = '1') then
+                        sCh1OutNext <= s_axis_ch1_tdata(15 downto 2);
+                        sCh1IntIncr <= diff_div_by_divrate(s_axis_ch1_tdata(15 downto 2) - sCh1OutNext, sCh1DivRate);
+                    else
+                        sCh1OutNext <= (others => '0');
+                        sCh1IntIncr <= (others => '0');
+                    end if;
+                    sCh1Out <= sCh1OutNext;
                 else
-                    sCh1Out <= (others => '0');
-                end if;
-                s_axis_ch2_tready <= '1';
-                if (s_axis_ch2_tvalid = '1') then
-                    sCh2Out <= s_axis_ch2_tdata(15 downto 2);
-                else
-                    sCh2Out <= (others => '0');
-                end if;
+                    sCh1OutLast <= sCh1OutLast + sCh1IntIncr;
+                    sCh1Out <= sCh1OutLast + sCh1IntIncr;
+                    sCh1DivRateCnt <= sCh1DivRateCnt + '1';
+                    s_axis_ch1_tready <= '0';
+                end if;               
             else
-                sDivRateCnt <= sDivRateCnt + '1';
-                s_axis_ch1_tready <= '0';
-                s_axis_ch2_tready <= '0';
+                if(sCh1DivRateCnt = sCh1DivRate) then
+                    sCh1DivRateCnt <= "00000000000000000001";
+                    s_axis_ch1_tready <= '1';
+                    if (s_axis_ch1_tvalid = '1') then
+                        sCh1OutNext <= s_axis_ch1_tdata(15 downto 2);
+                        sCh1Out <= s_axis_ch1_tdata(15 downto 2);
+                    else
+                        sCh1OutNext <= (others => '0');
+                        sCh1Out <= (others => '0');
+                    end if;
+                    sCh1OutLast <= sCh1OutNext;
+                else
+                    sCh1DivRateCnt <= sCh1DivRateCnt + '1';
+                    s_axis_ch1_tready <= '0';
+                end if;
+            end if;
+            if(lCh2DivInterpolate = '1') then
+                if(sCh2DivRateCnt = sCh2DivRate) then
+                    sCh2DivRateCnt <= "00000000000000000001";
+                    s_axis_ch2_tready <= '1';
+                    sCh2OutLast <= sCh2OutNext;
+                    if (s_axis_ch2_tvalid = '1') then
+                        sCh2OutNext <= s_axis_ch2_tdata(15 downto 2);
+                        sCh2IntIncr <= diff_div_by_divrate(s_axis_ch2_tdata(15 downto 2) - sCh2OutNext, sCh2DivRate);
+                    else
+                        sCh2OutNext <= (others => '0');
+                        sCh2IntIncr <= (others => '0');
+                    end if;
+                    sCh2Out <= sCh2OutNext;
+                else
+                    sCh2OutLast <= sCh2OutLast + sCh2IntIncr;
+                    sCh2Out <= sCh2OutLast + sCh2IntIncr;
+                    sCh2DivRateCnt <= sCh2DivRateCnt + '1';
+                    s_axis_ch2_tready <= '0';
+                end if;  
+            else
+                if(sCh2DivRateCnt = sCh2DivRate) then
+                    sCh2DivRateCnt <= "00000000000000000001";
+                    s_axis_ch2_tready <= '1';
+                    if (s_axis_ch2_tvalid = '1') then
+                        sCh2OutNext <= s_axis_ch2_tdata(15 downto 2);
+                        sCh2Out <= s_axis_ch2_tdata(15 downto 2);
+                    else
+                        sCh2OutNext <= (others => '0');
+                        sCh2Out <= (others => '0');
+                    end if;
+                    sCh2OutLast <= sCh2OutNext;
+                else
+                    sCh2DivRateCnt <= sCh2DivRateCnt + '1';
+                    s_axis_ch2_tready <= '0';
+                end if;
             end if;
         end if;
     end if;
@@ -661,6 +784,8 @@ sReg13Rd <= sRegisters(9);
 sReg14Rd <= sRegisters(10);
 sReg15Rd <= sRegisters(11);
 sReg16Rd <= sRegisters(12);
+sReg17Rd <= sRegisters(13);
+sReg18Rd <= sRegisters(14);
 
 --Control Register (00h)
 sSPI_CmdRunStop <= sReg0Rd(1);
@@ -693,6 +818,10 @@ sCh2LgMultCoef <= sReg13Rd(17 downto 0);
 sCh2LgAddCoef  <= sReg14Rd(17 downto 0);
 sCh2HgMultCoef <= sReg15Rd(17 downto 0);
 sCh2HgAddCoef  <= sReg16Rd(17 downto 0);
+sCh1DivRate    <= sReg17Rd(29 downto 10);
+lCh1DivInterpolate <= sReg17Rd(9);
+sCh2DivRate    <= sReg18Rd(29 downto 10);
+lCh2DivInterpolate <= sReg18Rd(9);
 	
 ProcIrq: process (s00_axi_aclk)  
 begin
