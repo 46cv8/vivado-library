@@ -302,8 +302,101 @@ begin
       v_TEMP(0 downto 0) :=  sDifferenceF(13 downto 13);
       v_TEMP(13 downto 1) := sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13) & sDifferenceF(13 downto 13);
     else
-      v_TEMP := sDifferenceF;  
+      v_TEMP(13 downto 0) := "00000000000000";
     end if;
+    return std_logic_vector(v_TEMP);
+end;
+
+
+function interpolate_divrate (
+    sDifferenceF : in std_logic_vector(13 downto 0);
+    sDivRateF : in std_logic_vector(19 downto 0);
+    sDivRateCntMinusOneF : in std_logic_vector(19 downto 0)
+    )
+    return std_logic_vector is
+    variable v_TEMP : std_logic_vector(13 downto 0);
+    variable v_TEMP_0 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_1 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_2 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_3 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_4 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_5 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_6 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_7 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_8 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_9 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_10 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_11 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_12 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_13 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_14 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_15 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_16 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_17 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_18 : std_logic_vector(13 downto 0) := "00000000000000";
+    variable v_TEMP_19 : std_logic_vector(13 downto 0) := "00000000000000";
+begin
+    if (sDivRateCntMinusOneF(0) = '1' and sDivRateF >= "00000000000000000001") then
+      v_TEMP_0(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), sDivRateF(19 downto 0));
+    end if;
+    if (sDivRateCntMinusOneF(1) = '1' and sDivRateF >= "00000000000000000010") then
+      v_TEMP_1(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0" & sDivRateF(19 downto 1));
+    end if;
+    if (sDivRateCntMinusOneF(2) = '1' and sDivRateF >= "00000000000000000100") then
+      v_TEMP_2(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "00" & sDivRateF(19 downto 2));
+    end if;
+    if (sDivRateCntMinusOneF(3) = '1' and sDivRateF >= "00000000000000001000") then
+      v_TEMP_3(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "000" & sDivRateF(19 downto 3));
+    end if;
+    if (sDivRateCntMinusOneF(4) = '1' and sDivRateF >= "00000000000000010000") then
+      v_TEMP_4(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0000" & sDivRateF(19 downto 4));
+    end if;
+    if (sDivRateCntMinusOneF(5) = '1' and sDivRateF >= "00000000000000100000") then
+      v_TEMP_5(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "00000" & sDivRateF(19 downto 5));
+    end if;
+    if (sDivRateCntMinusOneF(6) = '1' and sDivRateF >= "00000000000001000000") then
+      v_TEMP_6(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "000000" & sDivRateF(19 downto 6));
+    end if;
+    if (sDivRateCntMinusOneF(7) = '1' and sDivRateF >= "00000000000010000000") then
+      v_TEMP_7(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0000000" & sDivRateF(19 downto 7));
+    end if;
+    if (sDivRateCntMinusOneF(8) = '1' and sDivRateF >= "00000000000100000000") then
+      v_TEMP_8(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "00000000" & sDivRateF(19 downto 8));
+    end if;
+    if (sDivRateCntMinusOneF(9) = '1' and sDivRateF >= "00000000001000000000") then
+      v_TEMP_9(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "000000000" & sDivRateF(19 downto 9));
+    end if;
+    if (sDivRateCntMinusOneF(10) = '1' and sDivRateF >= "00000000010000000000") then
+      v_TEMP_10(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0000000000" & sDivRateF(19 downto 10));
+    end if;
+    if (sDivRateCntMinusOneF(11) = '1' and sDivRateF >= "00000000100000000000") then
+      v_TEMP_11(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "00000000000" & sDivRateF(19 downto 11));
+    end if;
+    if (sDivRateCntMinusOneF(12) = '1' and sDivRateF >= "00000001000000000000") then
+      v_TEMP_12(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "000000000000" & sDivRateF(19 downto 12));
+    end if;
+    if (sDivRateCntMinusOneF(13) = '1' and sDivRateF >= "00000010000000000000") then
+      v_TEMP_13(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0000000000000" & sDivRateF(19 downto 13));
+    end if;
+    if (sDivRateCntMinusOneF(14) = '1' and sDivRateF >= "00000100000000000000") then
+      v_TEMP_14(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "00000000000000" & sDivRateF(19 downto 14));
+    end if;
+    if (sDivRateCntMinusOneF(15) = '1' and sDivRateF >= "00001000000000000000") then
+      v_TEMP_15(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "000000000000000" & sDivRateF(19 downto 15));
+    end if;
+    if (sDivRateCntMinusOneF(16) = '1' and sDivRateF >= "00010000000000000000") then
+      v_TEMP_16(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0000000000000000" & sDivRateF(19 downto 16));
+    end if;
+    if (sDivRateCntMinusOneF(17) = '1' and sDivRateF >= "00100000000000000000") then
+      v_TEMP_17(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "00000000000000000" & sDivRateF(19 downto 17));
+    end if;
+    if (sDivRateCntMinusOneF(18) = '1' and sDivRateF >= "01000000000000000000") then
+      v_TEMP_18(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "000000000000000000" & sDivRateF(19 downto 18));
+    end if;
+    if (sDivRateCntMinusOneF(19) = '1' and sDivRateF >= "10000000000000000000") then
+      v_TEMP_19(13 downto 0) :=  diff_div_by_divrate(sDifferenceF(13 downto 0), "0000000000000000000" & sDivRateF(19 downto 19));
+    end if;
+    v_TEMP := v_TEMP_0 + v_TEMP_1 + v_TEMP_2 + v_TEMP_3 + v_TEMP_4 + v_TEMP_5 + v_TEMP_6 + v_TEMP_7 + v_TEMP_8 + v_TEMP_9 + v_TEMP_10 + v_TEMP_11 + v_TEMP_12 + v_TEMP_13 + v_TEMP_14 + v_TEMP_15 + v_TEMP_16 + v_TEMP_17 + v_TEMP_18 + v_TEMP_19;
     return std_logic_vector(v_TEMP);
 end;
 
@@ -315,9 +408,9 @@ signal sTransferLength, lDinTL :  std_logic_vector (kBufferSize-1 downto 0);
 signal lBufferFull, lSetStop : std_logic;
 signal lAdcSPI_Idle : std_logic;
 signal sOutAddrCntRst, sOutAddrCntRstR, sOutAddrCntRstPulse : std_logic;
-signal sDivRate, sCh1DivRate, sCh1DivRateCnt, sCh2DivRate, sCh2DivRateCnt : std_logic_vector(19 downto 0);
+signal sDivRate, sCh1DivRate, sCh1DivRateCnt, sCh1DivRateCntMinusOne, sCh2DivRate, sCh2DivRateCnt, sCh2DivRateCntMinusOne : std_logic_vector(19 downto 0);
 signal lCh1DivInterpolate, lCh2DivInterpolate : STD_LOGIC;
-signal sCh1OutLast, sCh2OutLast, sCh1OutNext, sCh2OutNext, sCh1OutDiff, sCh2OutDiff, sCh1IntIncr, sCh2IntIncr : std_logic_vector(13 downto 0);
+signal sCh1OutLast, sCh2OutLast, sCh1OutNext, sCh2OutNext : std_logic_vector(13 downto 0);
 
 signal lSPI_CmdTxCount : STD_LOGIC_VECTOR(6 downto 0);
 signal lSPI_CmdRxCount : STD_LOGIC_VECTOR(6 downto 0);
@@ -687,30 +780,29 @@ begin
             sCh2OutLast <= (others => '0');
             sCh1OutNext <= (others => '0');
             sCh2OutNext <= (others => '0');
-            sCh1IntIncr <= (others => '0');
-            sCh1IntIncr <= (others => '0');
             s_axis_ch1_tready <= '0';
             s_axis_ch2_tready <= '0';
-            sCh1DivRateCnt <= (others => '0');
-            sCh2DivRateCnt <= (others => '0');
+            sCh1DivRateCnt <= "00000000000000000001";
+            sCh2DivRateCnt <= "00000000000000000001";
+            sCh1DivRateCntMinusOne <= "00000000000000000000";
+            sCh2DivRateCntMinusOne <= "00000000000000000000";
         else            
             if(lCh1DivInterpolate = '1') then
                 if(sCh1DivRateCnt = sCh1DivRate) then
                     sCh1DivRateCnt <= "00000000000000000001";
+                    sCh1DivRateCntMinusOne <= "00000000000000000000";
                     s_axis_ch1_tready <= '1';
                     sCh1OutLast <= sCh1OutNext;
                     if (s_axis_ch1_tvalid = '1') then
                         sCh1OutNext <= s_axis_ch1_tdata(15 downto 2);
-                        sCh1IntIncr <= diff_div_by_divrate(s_axis_ch1_tdata(15 downto 2) - sCh1OutNext, sCh1DivRate);
                     else
                         sCh1OutNext <= (others => '0');
-                        sCh1IntIncr <= (others => '0');
                     end if;
                     sCh1Out <= sCh1OutNext;
                 else
-                    sCh1OutLast <= sCh1OutLast + sCh1IntIncr;
-                    sCh1Out <= sCh1OutLast + sCh1IntIncr;
+                    sCh1Out <= sCh1OutLast + interpolate_divrate(sCh1OutNext - sCh1OutLast, sCh1DivRate, sCh1DivRateCntMinusOne);
                     sCh1DivRateCnt <= sCh1DivRateCnt + '1';
+                    sCh1DivRateCntMinusOne <= sCh1DivRateCntMinusOne + '1';
                     s_axis_ch1_tready <= '0';
                 end if;               
             else
@@ -733,20 +825,19 @@ begin
             if(lCh2DivInterpolate = '1') then
                 if(sCh2DivRateCnt = sCh2DivRate) then
                     sCh2DivRateCnt <= "00000000000000000001";
+                    sCh2DivRateCntMinusOne <= "00000000000000000000";
                     s_axis_ch2_tready <= '1';
                     sCh2OutLast <= sCh2OutNext;
                     if (s_axis_ch2_tvalid = '1') then
                         sCh2OutNext <= s_axis_ch2_tdata(15 downto 2);
-                        sCh2IntIncr <= diff_div_by_divrate(s_axis_ch2_tdata(15 downto 2) - sCh2OutNext, sCh2DivRate);
                     else
                         sCh2OutNext <= (others => '0');
-                        sCh2IntIncr <= (others => '0');
                     end if;
                     sCh2Out <= sCh2OutNext;
                 else
-                    sCh2OutLast <= sCh2OutLast + sCh2IntIncr;
-                    sCh2Out <= sCh2OutLast + sCh2IntIncr;
+                    sCh2Out <= sCh2OutLast + interpolate_divrate(sCh2OutNext - sCh2OutLast, sCh2DivRate, sCh2DivRateCntMinusOne);
                     sCh2DivRateCnt <= sCh2DivRateCnt + '1';
+                    sCh2DivRateCntMinusOne <= sCh2DivRateCntMinusOne + '1';
                     s_axis_ch2_tready <= '0';
                 end if;  
             else
